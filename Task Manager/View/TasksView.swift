@@ -27,7 +27,7 @@ struct TasksView: View {
         
         /// Sorting
         let sortDescriptor = [
-            SortDescriptor(\Task.creationDate, order: .reverse)
+            SortDescriptor(\Task.creationDate, order: .forward)
         ]
         self._tasks = Query(filter: predicate, sort: sortDescriptor, animation: .snappy)
     }
@@ -48,6 +48,15 @@ struct TasksView: View {
         }
         .padding([.vertical, .leading], 15)
         .padding(.top, 15)
+        .overlay {
+            if tasks.isEmpty {
+                ContentUnavailableView {
+                    Label("No Tasks Found", systemImage: "checklist")
+                }
+                .frame(width: 300, height: 300)
+                .padding(.top, 200)
+            }
+        }
     }
 }
 

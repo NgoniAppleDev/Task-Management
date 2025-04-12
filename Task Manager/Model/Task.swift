@@ -26,11 +26,11 @@ class Task: Identifiable {
     
     var tintColor: Color {
         switch tint {
-        case "TaskColor1": .taskColor1
-        case "TaskColor2": .taskColor2
-        case "TaskColor3": .taskColor3
-        case "TaskColor4": .taskColor4
-        case "TaskColor5": .taskColor5
+        case "TaskColor 1": .taskColor1
+        case "TaskColor 2": .taskColor2
+        case "TaskColor 3": .taskColor3
+        case "TaskColor 4": .taskColor4
+        case "TaskColor 5": .taskColor5
         default: .taskColor1
         }
     }

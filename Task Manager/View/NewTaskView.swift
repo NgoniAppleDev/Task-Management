@@ -10,9 +10,15 @@ import SwiftUI
 struct NewTaskView: View {
     /// View Properties
     @Environment(\.dismiss) var dismiss
+    /// Model Context For Saving Data
+    @Environment(\.modelContext) var context
     @State private var taskTitle: String = ""
     @State private var taskDate: Date = .init()
-    @State private var taskColor: Color = .taskColor1
+    @State private var taskColor: String = "TaskColor 1"
+    
+    init(currentDate: Binding<Date>) {
+        self._taskDate = State(wrappedValue: currentDate.wrappedValue)
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
@@ -55,15 +61,14 @@ struct NewTaskView: View {
                         .font(.caption)
                         .foregroundStyle(.gray)
                     
-                    let colors: [Color] = [
-                        .taskColor1, .taskColor2, .taskColor3, .taskColor4,
-                        .taskColor5
-                    ]
+                    let colors: [String] = (1...5).compactMap { index -> String in
+                        return "TaskColor \(index)"
+                    }
                     
                     HStack(spacing: 0) {
                         ForEach(colors, id: \.self) { color in
                             Circle()
-                                .fill(color)
+                                .fill(Color(color))
                                 .frame(width: 20, height: 20)
                                 .background {
                                     Circle()
@@ -86,15 +91,23 @@ struct NewTaskView: View {
             Spacer(minLength: 0)
             
             Button {
-                
+                /// Saving Task
+                let task = Task(taskTitle: taskTitle, creationDate: taskDate, tint: taskColor)
+                do {
+                    context.insert(task)
+                    try context.save()
+                    dismiss()
+                } catch {
+                    print(error.localizedDescription)
+                }
             } label: {
                 Text("Create Task")
                     .font(.title3.weight(.semibold))
                     .textScale(.secondary)
                     .hSpacing(.center)
                     .padding(.vertical, 12)
-                    .background(taskColor, in: .rect(cornerRadius: 10))
-                    .foregroundStyle(Color.black)
+                    .background(Color(taskColor), in: .rect(cornerRadius: 10))
+                    .foregroundStyle(Color(.label))
             }
             .disabled(taskTitle.trimmingCharacters(in: .whitespaces).isEmpty)
             .opacity(taskTitle.trimmingCharacters(in: .whitespaces).isEmpty ? 0.5 : 1)
@@ -104,7 +117,7 @@ struct NewTaskView: View {
 }
 
 #Preview {
-    NewTaskView()
+    NewTaskView(currentDate: .constant(.init()))
         .vSpacing(.bottom)
 }
 

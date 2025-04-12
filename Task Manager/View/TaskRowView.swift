@@ -43,6 +43,10 @@ struct TaskRowView: View {
             .hSpacing(.leading)
             .background(task.tintColor, in: .rect(topLeadingRadius: 15, bottomLeadingRadius: 15))
             .strikethrough(task.isCompleted, pattern: .solid, color: Color(.label))
+            .contentShape(.contextMenuPreview, .rect(cornerRadius: 15))
+            .contextMenu {
+                Button("Delete Task", role: .destructive) {}
+            }
             .offset(y: -8)
         }
     }
