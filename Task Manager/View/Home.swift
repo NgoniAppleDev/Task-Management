@@ -13,6 +13,7 @@ struct Home: View {
     @State private var weekSlider: [[Date.WeekDay]] = []
     @State private var currentWeekIndex: Int = 1
     @State private var createWeek: Bool = false
+    @State private var createNewTask: Bool = false
     
     /// Animation Namespace
     @Namespace private var animation
@@ -21,8 +22,30 @@ struct Home: View {
         VStack(alignment: .leading, spacing: 0) {
             /// Header View
             HeaderView()
+            
+            ScrollView(.vertical) {
+                VStack {
+                    /// Tasks View
+                    TasksView(currentDate: $currentDate)
+                }
+                .hSpacing(.center)
+                .vSpacing(.center)
+            }
+            .scrollIndicators(.hidden)
         }
         .vSpacing(.top)
+        .overlay(alignment: .bottomTrailing, content: {
+            Button {
+                createNewTask.toggle()
+            } label: {
+                Image(systemName: "plus")
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white)
+                    .frame(width: 55, height: 55)
+                    .background(.darkBlue.shadow(.drop(color: .black.opacity(0.25), radius: 5, x: 10, y: 10)), in: .circle)
+            }
+            .padding(15)
+        })
         .onAppear {
             if weekSlider.isEmpty {
                 let currentWeek = Date().fetchWeek()
@@ -37,6 +60,13 @@ struct Home: View {
                     weekSlider.append(lastDate.createNextWeek())
                 }
             }
+        }
+        .sheet(isPresented: $createNewTask) {
+            NewTaskView()
+                .presentationDetents([.height(300)])
+                .interactiveDismissDisabled()
+                .presentationCornerRadius(30)
+                .presentationBackground(Color(.systemGroupedBackground))
         }
     }
     
